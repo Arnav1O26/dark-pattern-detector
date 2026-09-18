@@ -44,7 +44,7 @@ def extract_ui_snippets(html_content):
 
 def process_input(user_input, is_url=True):
     """
-    Master function to handle either a URL or raw HTML/Text.
+    Master function to handle either a URL, raw HTML, or plain text.
     """
     if is_url:
         html, error = fetch_html(user_input)
@@ -52,5 +52,14 @@ def process_input(user_input, is_url=True):
             return [], error
         return extract_ui_snippets(html), None
     else:
-        # If the user pasted raw HTML or text, skip the requests module
-        return extract_ui_snippets(user_input), None
+        # 1. Try parsing it as HTML first
+        snippets = extract_ui_snippets(user_input)
+        
+        # 2. If our extractor found buttons, spans, or divs, return them!
+        if snippets:
+            return snippets, None
+            
+        # 3. If it found absolutely nothing, it is plain text. 
+        # Split it by newlines so the user can paste multiple phrases at once.
+        raw_snippets = [line.strip() for line in user_input.split('\n') if line.strip()]
+        return raw_snippets, None
