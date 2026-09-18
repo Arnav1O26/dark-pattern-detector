@@ -1,0 +1,7 @@
+venv/
+DPDvenv/
+__pycache__/
+*.pkl
+.env
+.git/
+.streamlit/
